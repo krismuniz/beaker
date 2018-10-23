@@ -483,13 +483,27 @@ async function handleAutocompleteSearch (results) {
 
   // set the top results accordingly
   var gotoResult = { url: vWithProtocol, title: 'Go to ' + v, isGuessingTheScheme }
-  var searchResult = {
-    search: v,
-    title: 'DuckDuckGo Search',
-    url: vSearch
-  }
-  if (isProbablyUrl) autocompleteResults = [gotoResult, searchResult]
-  else autocompleteResults = [searchResult, gotoResult]
+
+  const ac = await window.fetch(`https://ac.duckduckgo.com/ac/?q=${v}&type=list`).then(v => v.json())
+
+  var searchResults = [
+    {
+      search: v,
+      title: 'DuckDuckGo Search',
+      url: vSearch
+    },
+    ...ac[1].slice(0, 3)
+    .filter((result) => result !== v)
+    .map((result) => {
+      return {
+        search: result,
+        title: 'DuckDuckGo Search',
+        url: `https://duckduckgo.com/?q=${result.split(' ').map(encodeURIComponent).join('+')}`
+      }
+    })
+  ]
+  if (isProbablyUrl) autocompleteResults = [gotoResult, ...searchResults]
+  else autocompleteResults = [...searchResults, gotoResult]
 
   // add search results
   if (results) {

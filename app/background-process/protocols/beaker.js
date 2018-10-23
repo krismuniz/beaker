@@ -16,7 +16,7 @@ import ICO from 'icojs'
 
 // content security policies
 const BEAKER_CSP = `
-  default-src 'self' beaker:;
+  default-src 'self' https://ac.duckduckgo.com beaker:;
   img-src beaker-favicon: beaker: data: dat: http: https;
   script-src 'self' beaker: 'unsafe-eval';
   media-src 'self' beaker: dat:;
